@@ -31,7 +31,9 @@ private:
 	Ball::Type player_turn = Ball::P1;
 	bool own_ball_fallen = false;
 	bool white_fallen = false;
+	bool black_fallen = false;
 	bool white_on_the_move = false;
+	bool game_over = false;
 
 
 public:
@@ -176,7 +178,11 @@ public:
 
 			if (white_on_the_move) {
 				white_on_the_move = false;
-				if (white_fallen || !own_ball_fallen) {
+				if (black_fallen) {
+					game_over = true;
+					return;
+				}
+				else if (white_fallen || !own_ball_fallen) {
 					end_turn();
 				}
 				else {
@@ -187,6 +193,16 @@ public:
 			if ((GetMouse(olc::Mouse::LEFT).bPressed) && ball.is_inside(GetMouseX(), GetMouseY())) {
 				white_ball = &ball;
 			}
+		}
+
+		if (GetMouse(olc::Mouse::LEFT).bHeld && white_ball) {
+			DrawLine(GetMousePos(), olc::vi2d(white_ball->pos.x, white_ball->pos.y), olc::BLUE);
+		}
+
+		if (GetMouse(olc::Mouse::LEFT).bReleased && white_ball) {
+			white_ball->v = (white_ball->pos - vec2d<float>(GetMouseX(), GetMouseY())) * 2;
+			white_on_the_move = true;
+			white_ball = nullptr;
 		}
 	}
 
@@ -218,6 +234,7 @@ public:
 					white_fallen = true;
 				}
 				else {
+					black_fallen |= b.type == Ball::BLACK;
 					own_ball_fallen |= b.type == player_turn;
 					engine.balls.erase(engine.balls.begin() + i);
 				}
@@ -235,18 +252,12 @@ public:
 		}
 
 		if (all_still) {
-			process_user_interaction();
-		}
-
-
-		if (GetMouse(olc::Mouse::LEFT).bHeld && white_ball) {
-			DrawLine(GetMousePos(), olc::vi2d(white_ball->pos.x, white_ball->pos.y), olc::BLUE);
-		}
-
-		if (GetMouse(olc::Mouse::LEFT).bReleased && white_ball) {
-			white_ball->v = (white_ball->pos - vec2d<float>(GetMouseX(), GetMouseY())) * 2;
-			white_on_the_move = true;
-			white_ball = nullptr;
+			if (game_over) {
+				DrawString({ 100,100 }, "Player " + (std::string)(player_turn == Ball::Type::P1 ? "RED" : "BLUE") + " WON!!!", Ball::type_colors[player_turn], 4U);
+			}
+			else {
+				process_user_interaction();
+			}
 		}
 
 		DrawString({ 10,10 }, "Player " + (std::string)(player_turn==Ball::Type::P1 ? "RED" : "BLUE") + "'s turn", Ball::type_colors[player_turn], 3U);
