@@ -2,6 +2,8 @@
 #include "olcPixelGameEngine.h"
 #include "vec.h"
 #include "physics.h"
+#include <random>
+#include <algorithm>
 const olc::Pixel Ball::type_colors[4] = { olc::WHITE, olc::BLACK, olc::RED, olc::BLUE };
 
 int randint(int a, int b) {
@@ -98,7 +100,10 @@ public:
 			type_pool[i + 1] = Ball::P2;
 		}
 		type_pool[14] = Ball::BLACK;
-		std::random_shuffle(type_pool, type_pool + 15);
+		
+		std::random_device rd;
+		std::mt19937 g(rd());
+		std::shuffle(type_pool, type_pool + 15, g);
 
 		int bx = tx + table_width*2/3;
 		int by = ty + table_height / 2;
@@ -143,12 +148,12 @@ public:
 			FillCircle(pos, table_border, olc::GREY);
 		}
 		FillRect(olc::vi2d(sx + table_border, sy + table_border), olc::vi2d(table_width, table_height), olc::DARK_GREEN);
-		draw(engine);
+		OlcPhysicsWindow::draw(engine);
 	}
 
-	//void draw(Ball& ball) {
-	//	DrawCircle(olc::vi2d(ball.pos.x, ball.pos.y), ball.r);
-	//}
+	void draw(Ball& ball) override {
+		FillCircle(olc::vi2d(ball.pos.x, ball.pos.y), ball.r, Ball::type_colors[ball.type]);
+	}
 
 	bool OnUserCreate() override
 	{

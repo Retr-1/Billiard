@@ -247,7 +247,7 @@ public:
 		DrawLine(olc::vi2d(line2a.x, line2a.y), olc::vi2d(line2b.x, line2b.y));
 	}
 
-	void draw(Ball& ball) {
+	virtual void draw(Ball& ball) {
 		DrawCircle(olc::vi2d(ball.pos.x, ball.pos.y), ball.r);
 	}
 
