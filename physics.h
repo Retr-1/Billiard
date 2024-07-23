@@ -14,6 +14,16 @@ public:
 	float r;
 	float sim_time_remaining;
 
+	enum Type {
+		WHITE,
+		BLACK,
+		P1,
+		P2
+	};
+
+	static const olc::Pixel type_colors[4];
+	Type type;
+
 	bool is_intersecting(const Ball& other) {
 		float distance = (pos - other.pos).mag();
 		return distance <= r + other.r;
@@ -60,6 +70,7 @@ public:
 	}
 
 };
+
 
 class StaticBall {
 public:

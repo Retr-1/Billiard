@@ -2,6 +2,7 @@
 #include "olcPixelGameEngine.h"
 #include "vec.h"
 #include "physics.h"
+const olc::Pixel Ball::type_colors[4] = { olc::WHITE, olc::BLACK, olc::RED, olc::BLUE };
 
 int randint(int a, int b) {
 	// returns from [a,b)
@@ -11,69 +12,10 @@ int randint(int a, int b) {
 	return std::rand() % (b - a + 1) + a;
 }
 
-
-class BilliardBall {
-public:
-	enum Type {
-		WHITE,
-		BLACK,
-		P1,
-		P2
-	};
-
-	static const olc::Pixel type_colors[4];
-
-	Ball* physics_ball;
-	Type type;
-
-	~BilliardBall() {
-		std::cout << "called destructor!\n";
-	}
-};
-const olc::Pixel BilliardBall::type_colors[4] = {olc::WHITE, olc::BLACK, olc::RED, olc::BLUE};
-
-class BilliardPhysicsEngine {
-	PhysicsEngine engine;
-
-public:
-	void add_ball() {
-
-	}
-
-	void remove_ball(int index) {
-
-	}
-
-	int get_ball_count() {
-
-	}
-
-	BilliardBall get_ball(int index) {
-
-	}
-};
-
-
 // Override base class with your custom functionality
 
 class Window : public OlcPhysicsWindow
 {
-private:
-	std::vector<BilliardBall> b_balls;
-
-	void add_billiard_ball(vec2d<float>& pos, float r, float mass, BilliardBall::Type type) {
-		Ball b;
-		b.pos = pos;
-		b.r = r;
-		b.mass = mass;
-
-		BilliardBall bb;
-		bb.type = type;
-
-		engine.balls.emplace_back(b);
-		bb.physics_ball = &engine.balls[engine.balls.size() - 1];
-	}
-
 public:
 	Window()
 	{
@@ -86,12 +28,13 @@ public:
 	{
 		// Called once at the start, so create things here
 		OlcPhysicsWindow::OnUserCreate();
-		//Ball b;
-		//b.r = 10;
+		Ball b;
+		b.r = 50;
 		//Ball b2;
 		//b2.r = 100;
 
-		//engine.balls.emplace_back(b);
+		engine.balls.emplace_back(b);
+		engine.gravity = true;
 		//engine.balls.emplace_back(b2);
 
 		//Ball* pb = &engine.balls[0];
