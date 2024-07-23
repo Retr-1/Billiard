@@ -180,6 +180,7 @@ public:
 				white_on_the_move = false;
 				if (black_fallen) {
 					game_over = true;
+					end_turn();
 					return;
 				}
 				else if (white_fallen || !own_ball_fallen) {
