@@ -12,10 +12,17 @@ int randint(int a, int b) {
 	return std::rand() % (b - a + 1) + a;
 }
 
-// Override base class with your custom functionality
 
 class Window : public OlcPhysicsWindow
 {
+private:
+	int table_width = 600;
+	int table_height = 350;
+	int table_border = 40;
+	int sx = 10; int sy = 10;
+	int tx = sx + table_border; int ty = sy + table_border;
+	int etx = tx + table_width; int ety = ty + table_height;
+
 public:
 	Window()
 	{
@@ -24,33 +31,93 @@ public:
 	}
 
 public:
+	void create_table() {
+		const int r = 3;
+		Capsule c1;
+		c1.start = vec2d<float>(tx + table_border, ty);
+		c1.end = vec2d<float>(tx + table_width / 2 - table_border, ty);
+		c1.r = r;
+		engine.capsules.emplace_back(c1);
+
+		Capsule c2;
+		c2.start = vec2d<float>(tx + table_border + table_width/2, ty);
+		c2.end = vec2d<float>(tx + table_width - table_border, ty);
+		c2.r = r;
+		engine.capsules.emplace_back(c2);
+
+		Capsule c3;
+		c3.start = vec2d<float>(etx, ty+table_border);
+		c3.end = vec2d<float>(etx, ty+table_height/2-table_border);
+		c3.r = r;
+		engine.capsules.emplace_back(c3);
+
+		Capsule c4;
+		c4.start = vec2d<float>(etx, ty+table_height / 2 + table_border);
+		c4.end = vec2d<float>(etx, ety-table_border);
+		c4.r = r;
+		engine.capsules.emplace_back(c4);
+
+		Capsule c5;
+		c5.start = vec2d<float>(etx-table_border, ety);
+		c5.end = vec2d<float>(etx-table_width/2+table_border, ety);
+		c5.r = r;
+		engine.capsules.emplace_back(c5);
+
+		Capsule c6;
+		c6.start = vec2d<float>(tx + table_border, ety);
+		c6.end = vec2d<float>(tx + table_width / 2 - table_border, ety);
+		c6.r = r;
+		engine.capsules.emplace_back(c6);
+
+		Capsule c7;
+		c7.start = vec2d<float>(tx, ety-table_border);
+		c7.end = vec2d<float>(tx, ty+table_height/2+table_border);
+		c7.r = r;
+		engine.capsules.emplace_back(c7);
+
+		Capsule c8;
+		c8.start = vec2d<float>(tx, ty+table_border);
+		c8.end = vec2d<float>(tx, ty+table_height/2-table_border);
+		c8.r = r;
+		engine.capsules.emplace_back(c8);
+	}
+
+	void draw_table() {
+		// outer border
+		
+		/*DrawLine(olc::vi2d(sx, sy), olc::vi2d(sx + table_width + table_border * 2, sy));
+		DrawLine(olc::vi2d(sx, sy+table_border*2+table_height), olc::vi2d(sx + table_width + table_border * 2, sy+table_border*2+table_height));
+		DrawLine(olc::vi2d(sx, sy), olc::vi2d(sx, sy+table_height+table_border*2));
+		DrawLine(olc::vi2d(sx+table_width+table, sy), olc::vi2d(sx+table_width+table_border*2, sy + table_height + table_border * 2));*/
+		FillRect(olc::vi2d(sx, sy), olc::vi2d(table_width + table_border * 2, table_height + table_border * 2), olc::DARK_GREEN);
+		for (olc::vi2d pos : {
+			olc::vi2d(sx + table_border,sy + table_border),
+			olc::vi2d(sx + table_border + table_width / 2, sy + table_border),
+			olc::vi2d(sx + table_border + table_width, sy + table_border),
+			olc::vi2d(sx + table_border,sy + table_border + table_height),
+			olc::vi2d(sx + table_border + table_width / 2, sy + table_border + table_height),
+			olc::vi2d(sx + table_border + table_width, sy + table_border + table_height),
+			olc::vi2d(sx + table_border, sy + table_border + table_height / 2),
+			olc::vi2d(sx + table_border + table_width, sy + table_border + table_height / 2),
+			})
+		{
+			FillCircle(pos, table_border, olc::GREY);
+		}
+		FillRect(olc::vi2d(sx + table_border, sy + table_border), olc::vi2d(table_width, table_height), olc::DARK_GREEN);
+		draw(engine);
+	}
+
 	bool OnUserCreate() override
 	{
-		// Called once at the start, so create things here
 		OlcPhysicsWindow::OnUserCreate();
-		Ball b;
-		b.r = 50;
-		//Ball b2;
-		//b2.r = 100;
-
-		engine.balls.emplace_back(b);
-		engine.gravity = true;
-		//engine.balls.emplace_back(b2);
-
-		//Ball* pb = &engine.balls[0];
-		//Ball* pb2 = &engine.balls[1];
-
-		//engine.balls.erase(engine.balls.begin()+1);
-
-		//std::cout << pb2->r << ' ' << pb->r << '\n';
-		//std::cout << pb2 << ' ' << pb << '\n';
-
+		create_table();
 		return true;
 	}
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-		OlcPhysicsWindow::OnUserUpdate(fElapsedTime);
+		engine.update(fElapsedTime);
+		draw_table();
 		return true;
 	}
 };
