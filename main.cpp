@@ -22,6 +22,8 @@ private:
 	int sx = 10; int sy = 10;
 	int tx = sx + table_border; int ty = sy + table_border;
 	int etx = tx + table_width; int ety = ty + table_height;
+	int ball_r = table_border / 3;
+	float ball_mass = 20;
 
 public:
 	Window()
@@ -82,6 +84,43 @@ public:
 		engine.capsules.emplace_back(c8);
 	}
 
+	void create_balls() {
+		Ball b;
+		b.type = Ball::WHITE;
+		b.r = ball_r;
+		b.pos = vec2d<float>(tx + table_width / 4, ty + table_height / 2);
+		b.mass = ball_mass;
+		engine.balls.push_back(b);
+
+		Ball::Type type_pool[15];
+		for (int i = 0; i < 14; i += 2) {
+			type_pool[i] = Ball::P1;
+			type_pool[i + 1] = Ball::P2;
+		}
+		type_pool[14] = Ball::BLACK;
+		std::random_shuffle(type_pool, type_pool + 15);
+
+		int bx = tx + table_width*2/3;
+		int by = ty + table_height / 2;
+		int c = 0;
+		for (int i = 0; i < 5; i++) {
+			int tmpy = by;
+			for (int j = 0; j <= i; j++) {
+				Ball b;
+				b.r = ball_r;
+				b.pos = vec2d<float>(bx, tmpy);
+				b.mass = ball_mass;
+				b.type = type_pool[c];
+				engine.balls.emplace_back(b);
+
+				tmpy += ball_r*2;
+				c++;
+			}
+			by -= ball_r;
+			bx += ball_r*2;
+		}
+	}
+
 	void draw_table() {
 		// outer border
 		
@@ -107,10 +146,15 @@ public:
 		draw(engine);
 	}
 
+	//void draw(Ball& ball) {
+	//	DrawCircle(olc::vi2d(ball.pos.x, ball.pos.y), ball.r);
+	//}
+
 	bool OnUserCreate() override
 	{
 		OlcPhysicsWindow::OnUserCreate();
 		create_table();
+		create_balls();
 		return true;
 	}
 
