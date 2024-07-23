@@ -155,7 +155,7 @@ public:
 					b.v += b.a * b.sim_time_remaining;
 					//b.v -= b.v.normalized() * 20.0f * b.sim_time_remaining; // OLD WAY OF DRAG
 
-					if (b.v.dot(b.v) < 0.1f) {
+					if (b.v.dot(b.v) < 10.0f) {
 						b.v.x = 0;
 						b.v.y = 0;
 					}

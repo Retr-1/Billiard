@@ -27,6 +27,8 @@ private:
 	int ball_r = table_border / 3;
 	float ball_mass = 20;
 
+	Ball* white_ball = nullptr;
+
 public:
 	Window()
 	{
@@ -90,9 +92,10 @@ public:
 		Ball b;
 		b.type = Ball::WHITE;
 		b.r = ball_r;
-		b.pos = vec2d<float>(tx + table_width / 4, ty + table_height / 2);
+		b.pos = vec2d<float>(tx + table_width / 3, ty + table_height / 2);
 		b.mass = ball_mass;
 		engine.balls.push_back(b);
+		white_ball = &engine.balls[0];
 
 		Ball::Type type_pool[15];
 		for (int i = 0; i < 14; i += 2) {
@@ -167,6 +170,31 @@ public:
 	{
 		engine.update(fElapsedTime);
 		draw_table();
+
+		if (GetMouse(olc::Mouse::LEFT).bPressed) {
+			for (Ball& ball : engine.balls) {
+				if (ball.type != Ball::WHITE)
+					continue;
+
+				if (ball.v.mag() > 1.0f)
+					break;
+				
+				if (ball.is_inside(GetMouseX(), GetMouseY())) {
+					white_ball = &ball;
+				}
+			}
+		}
+
+		if (GetMouse(olc::Mouse::LEFT).bHeld && white_ball) {
+			DrawLine(GetMousePos(), olc::vi2d(white_ball->pos.x, white_ball->pos.y), olc::BLUE);
+		}
+
+		if (GetMouse(olc::Mouse::LEFT).bReleased && white_ball) {
+			white_ball->v = (white_ball->pos - vec2d<float>(GetMouseX(), GetMouseY())) * 2;
+
+			white_ball = nullptr;
+		}
+
 		return true;
 	}
 };
