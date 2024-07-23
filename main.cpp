@@ -26,6 +26,7 @@ private:
 	int etx = tx + table_width; int ety = ty + table_height;
 	int ball_r = table_border / 3;
 	float ball_mass = 20;
+	vec2d<float> default_white_pos = vec2d<float>(tx + table_width / 3, ty + table_height / 2);
 
 	Ball* white_ball = nullptr;
 
@@ -92,7 +93,7 @@ public:
 		Ball b;
 		b.type = Ball::WHITE;
 		b.r = ball_r;
-		b.pos = vec2d<float>(tx + table_width / 3, ty + table_height / 2);
+		b.pos = default_white_pos;
 		b.mass = ball_mass;
 		engine.balls.push_back(b);
 		white_ball = &engine.balls[0];
@@ -193,6 +194,25 @@ public:
 			white_ball->v = (white_ball->pos - vec2d<float>(GetMouseX(), GetMouseY())) * 2;
 
 			white_ball = nullptr;
+		}
+
+		//check off grid
+		for (int i = engine.balls.size() - 1; i >= 0; i--) {
+			Ball& b = engine.balls[i];
+			/*if (b.pos.x - b.r > etx || b.pos.x + b.r < tx || b.pos.y - b.r > ety || b.pos.y + b.r < ty) {
+				engine.balls.erase(engine.balls.begin() + i);
+			}*/
+			if (b.pos.x > etx || b.pos.x  < tx || b.pos.y > ety || b.pos.y < ty) {
+				if (b.type == Ball::WHITE) {
+					b.pos = default_white_pos;
+					b.v.x = 0;
+					b.v.y = 0;
+				}
+				else {
+					engine.balls.erase(engine.balls.begin() + i);
+				}
+				
+			}
 		}
 
 		return true;
