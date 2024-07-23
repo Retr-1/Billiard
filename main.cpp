@@ -21,14 +21,18 @@ private:
 	int table_width = 600;
 	int table_height = 350;
 	int table_border = 40;
-	int sx = 10; int sy = 10;
+	int sx = (800-(table_width+table_border*2))/2; int sy = (800-(table_height+table_border*2))/2;
 	int tx = sx + table_border; int ty = sy + table_border;
 	int etx = tx + table_width; int ety = ty + table_height;
 	int ball_r = table_border / 3;
 	float ball_mass = 20;
 	vec2d<float> default_white_pos = vec2d<float>(tx + table_width / 3, ty + table_height / 2);
-
 	Ball* white_ball = nullptr;
+	Ball::Type player_turn = Ball::P1;
+	bool own_ball_fallen = false;
+	bool white_fallen = false;
+	bool white_on_the_move = false;
+
 
 public:
 	Window()
@@ -159,6 +163,33 @@ public:
 		FillCircle(olc::vi2d(ball.pos.x, ball.pos.y), ball.r, Ball::type_colors[ball.type]);
 	}
 
+	void end_turn() {
+		player_turn = player_turn == Ball::P1 ? Ball::P2 : Ball::P1;
+		white_fallen = false;
+		own_ball_fallen = false;
+	}
+
+	void process_user_interaction() {
+		for (Ball& ball : engine.balls) {
+			if (ball.type != Ball::WHITE)
+				continue;
+
+			if (white_on_the_move) {
+				white_on_the_move = false;
+				if (white_fallen || !own_ball_fallen) {
+					end_turn();
+				}
+				else {
+					own_ball_fallen = false;
+				}
+			}
+
+			if ((GetMouse(olc::Mouse::LEFT).bPressed) && ball.is_inside(GetMouseX(), GetMouseY())) {
+				white_ball = &ball;
+			}
+		}
+	}
+
 	bool OnUserCreate() override
 	{
 		OlcPhysicsWindow::OnUserCreate();
@@ -169,32 +200,9 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
+		Clear(olc::BLACK);
+
 		engine.update(fElapsedTime);
-		draw_table();
-
-		if (GetMouse(olc::Mouse::LEFT).bPressed) {
-			for (Ball& ball : engine.balls) {
-				if (ball.type != Ball::WHITE)
-					continue;
-
-				if (ball.v.mag() > 1.0f)
-					break;
-				
-				if (ball.is_inside(GetMouseX(), GetMouseY())) {
-					white_ball = &ball;
-				}
-			}
-		}
-
-		if (GetMouse(olc::Mouse::LEFT).bHeld && white_ball) {
-			DrawLine(GetMousePos(), olc::vi2d(white_ball->pos.x, white_ball->pos.y), olc::BLUE);
-		}
-
-		if (GetMouse(olc::Mouse::LEFT).bReleased && white_ball) {
-			white_ball->v = (white_ball->pos - vec2d<float>(GetMouseX(), GetMouseY())) * 2;
-
-			white_ball = nullptr;
-		}
 
 		//check off grid
 		for (int i = engine.balls.size() - 1; i >= 0; i--) {
@@ -207,13 +215,41 @@ public:
 					b.pos = default_white_pos;
 					b.v.x = 0;
 					b.v.y = 0;
+					white_fallen = true;
 				}
 				else {
+					own_ball_fallen |= b.type == player_turn;
 					engine.balls.erase(engine.balls.begin() + i);
 				}
-				
 			}
 		}
+
+		draw_table();
+
+		bool all_still = true;
+		for (Ball& b : engine.balls) {
+			if (b.v.mag() > 1.0f) {
+				all_still = false;
+				break;
+			}
+		}
+
+		if (all_still) {
+			process_user_interaction();
+		}
+
+
+		if (GetMouse(olc::Mouse::LEFT).bHeld && white_ball) {
+			DrawLine(GetMousePos(), olc::vi2d(white_ball->pos.x, white_ball->pos.y), olc::BLUE);
+		}
+
+		if (GetMouse(olc::Mouse::LEFT).bReleased && white_ball) {
+			white_ball->v = (white_ball->pos - vec2d<float>(GetMouseX(), GetMouseY())) * 2;
+			white_on_the_move = true;
+			white_ball = nullptr;
+		}
+
+		DrawString({ 10,10 }, "Player " + (std::string)(player_turn==Ball::Type::P1 ? "RED" : "BLUE") + "'s turn", Ball::type_colors[player_turn], 3U);
 
 		return true;
 	}
