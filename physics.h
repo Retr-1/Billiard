@@ -201,24 +201,9 @@ public:
 	}
 };
 
-class OlcPhysicsWindow : public olc::PixelGameEngine {
-protected:
-	PhysicsEngine engine;
-
-	bool OnUserCreate() override {
-		engine.width = ScreenWidth();
-		engine.height = ScreenHeight();
-		return true;
-	}
-
-	bool OnUserUpdate(float fElapsedTime) override {
-		Clear(olc::BLACK);
-		engine.update(fElapsedTime);
-		draw();
-		return true;
-	}
-
-	void draw() {
+class OlcPhysicsDrawingWindow : public olc::PixelGameEngine {
+public:
+	void draw(PhysicsEngine& engine) {
 		for (Ball& b : engine.balls) {
 			draw(b);
 		}
@@ -257,5 +242,23 @@ protected:
 
 	void draw(StaticBall& ball) {
 		DrawCircle(olc::vi2d(ball.pos.x, ball.pos.y), ball.r);
+	}
+};
+
+class OlcPhysicsWindow : public OlcPhysicsDrawingWindow {
+protected:
+	PhysicsEngine engine;
+
+	bool OnUserCreate() override {
+		engine.width = ScreenWidth();
+		engine.height = ScreenHeight();
+		return true;
+	}
+
+	bool OnUserUpdate(float fElapsedTime) override {
+		Clear(olc::BLACK);
+		engine.update(fElapsedTime);
+		draw(engine);
+		return true;
 	}
 };
