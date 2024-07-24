@@ -148,14 +148,14 @@ public:
 					b.old_pos = b.pos;
 					b.pos += b.v * b.sim_time_remaining;
 
-					b.a = b.v * -0.5f;
+					b.a = b.v * -0.9f;
 					if (gravity)
 						b.a.y += 100.0f;
 
 					b.v += b.a * b.sim_time_remaining;
 					//b.v -= b.v.normalized() * 20.0f * b.sim_time_remaining; // OLD WAY OF DRAG
 
-					if (b.v.dot(b.v) < 10.0f) {
+					if (b.v.dot(b.v) < 30.0f) {
 						b.v.x = 0;
 						b.v.y = 0;
 					}

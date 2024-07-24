@@ -21,7 +21,7 @@ private:
 	int table_width = 600;
 	int table_height = 350;
 	int table_border = 40;
-	int sx = (800-(table_width+table_border*2))/2; int sy = (800-(table_height+table_border*2))/2;
+	int sx = (1200-(table_width+table_border*2))/2; int sy = (800-(table_height+table_border*2))/2;
 	int tx = sx + table_border; int ty = sy + table_border;
 	int etx = tx + table_width; int ety = ty + table_height;
 	int ball_r = table_border / 3;
@@ -29,11 +29,13 @@ private:
 	vec2d<float> default_white_pos = vec2d<float>(tx + table_width / 3, ty + table_height / 2);
 	Ball* white_ball = nullptr;
 	Ball::Type player_turn = Ball::P1;
+	Ball::Type winner = Ball::WHITE;
 	bool own_ball_fallen = false;
 	bool white_fallen = false;
 	bool black_fallen = false;
 	bool white_on_the_move = false;
 	bool game_over = false;
+	int n_player_balls[4] = {1,1,7,7 };
 
 
 public:
@@ -180,7 +182,13 @@ public:
 				white_on_the_move = false;
 				if (black_fallen) {
 					game_over = true;
-					end_turn();
+					if (n_player_balls[player_turn] == 0) {
+						winner = player_turn;
+					}
+					else {
+						end_turn();
+						winner = player_turn;
+					}
 					return;
 				}
 				else if (white_fallen || !own_ball_fallen) {
@@ -197,7 +205,7 @@ public:
 		}
 
 		if (GetMouse(olc::Mouse::LEFT).bHeld && white_ball) {
-			DrawLine(GetMousePos(), olc::vi2d(white_ball->pos.x, white_ball->pos.y), olc::BLUE);
+			DrawLine(GetMousePos(), olc::vi2d(white_ball->pos.x, white_ball->pos.y), Ball::type_colors[player_turn]);
 		}
 
 		if (GetMouse(olc::Mouse::LEFT).bReleased && white_ball) {
@@ -237,6 +245,7 @@ public:
 				else {
 					black_fallen |= b.type == Ball::BLACK;
 					own_ball_fallen |= b.type == player_turn;
+					n_player_balls[b.type]--;
 					engine.balls.erase(engine.balls.begin() + i);
 				}
 			}
@@ -254,14 +263,15 @@ public:
 
 		if (all_still) {
 			if (game_over) {
-				DrawString({ 100,100 }, "Player " + (std::string)(player_turn == Ball::Type::P1 ? "RED" : "BLUE") + " WON!!!", Ball::type_colors[player_turn], 4U);
+				DrawString({ tx,100 }, "Player " + (std::string)(winner == Ball::Type::P1 ? "RED" : "BLUE") + " WON!!!", Ball::type_colors[winner], 4U);
 			}
 			else {
 				process_user_interaction();
+				DrawString({ 10,10 }, "Player " + (std::string)(player_turn == Ball::Type::P1 ? "RED" : "BLUE") + "'s turn", Ball::type_colors[player_turn], 3U);
 			}
 		}
 
-		DrawString({ 10,10 }, "Player " + (std::string)(player_turn==Ball::Type::P1 ? "RED" : "BLUE") + "'s turn", Ball::type_colors[player_turn], 3U);
+		
 
 		return true;
 	}
@@ -270,7 +280,7 @@ public:
 
 int main() {
 	Window win;
-	if (win.Construct(800, 800, 1, 1))
+	if (win.Construct(1200, 800, 1, 1))
 		win.Start();
 
 	return 0;
