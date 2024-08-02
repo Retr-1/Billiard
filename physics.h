@@ -14,6 +14,7 @@ public:
 	float r;
 	float sim_time_remaining;
 	olc::Sprite* sprite;
+	vec2d<float> travelled;
 
 	enum Type {
 		WHITE,
@@ -39,9 +40,11 @@ public:
 		if (intended_speed == 0.0f) {
 			return;
 		}
-		float actual_travelled = (pos - old_pos).mag();
+		vec2d<float> v_travelled = pos - old_pos;
+		float actual_travelled = v_travelled.mag();
 		float actual_time = actual_travelled / intended_speed;
 		sim_time_remaining -= actual_time;
+		travelled += v_travelled;
 	}
 
 	static void collide(Ball& b1, Ball& b2) {

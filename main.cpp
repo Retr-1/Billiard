@@ -178,12 +178,48 @@ public:
 		float bottom = ball.pos.y + ball.r;
 		float left = ball.pos.x - ball.r;
 		float right = ball.pos.x + ball.r;
-		for (int y = top; y < bottom; y++) {
-			float dy = fabs(y - ball.pos.y);
-			float r2 = sqrtf(ball.r * ball.r - dy * dy);
-			float dx = ball.r - r2;
-			for (int x = left + dx; x < right - dx; x++) {
-				Draw(x, y, Ball::type_colors[ball.type]);
+		float size = ball.r * 2;
+		int rsqr = ball.r * ball.r;
+		//for (int y = top; y < bottom; y++) {
+		//	float dy = fabs(y - ball.pos.y);
+		//	float r2 = sqrtf(rsqr - dy * dy);
+		//	float dx = ball.r - r2;
+		//	float seg_width = (right - dx) - (left + dx);
+		//	for (int x = left + dx; x < right - dx; x++) {
+		//		//Draw(x, y, Ball::type_colors[ball.type]);
+		//		//float perimeter = 2 * 3.1415f * r2;
+		//		float u = (y-top) / size;
+		//		float v = (x - left) / size;
+		//		
+		//		olc::Pixel color;
+		//		if (ball.type != Ball::WHITE) {
+		//			//std::cout << ball.sprite;
+		//			color = ball.sprite->Sample(u, v);
+		//		}
+		//		else {
+		//			color = olc::WHITE;
+		//		}
+
+		//		Draw(x, y, color);
+		//	}
+		//}
+
+		for (int x = left; x < right; x++) {
+			float dx = fabs(x - ball.pos.x);
+			float dy = sqrtf(rsqr - dx * dx);
+			float sy = ball.r - dy;
+			for (int y = top + sy; y < bottom - sy; y++) {
+				float v = fmodf(fmodf(y - top + ball.travelled.y*0.1 - 0.25, size)+size,size) / size / 2;
+				float u = fmodf(fmodf(x - left + ball.travelled.x*0.1, size)+size,size) / size;
+				if (u > 1 || v > 1)
+					std::cout << u << ' ' << v << '\n';
+
+				if (ball.type == Ball::WHITE) {
+					Draw(x, y, Ball::type_colors[ball.type]);
+				}
+				else {
+					Draw(x, y, ball.sprite->Sample(u, v));
+				}
 			}
 		}
 	}
@@ -239,8 +275,6 @@ public:
 	bool OnUserCreate() override
 	{
 		OlcPhysicsWindow::OnUserCreate();
-		create_table();
-		create_balls();
 
 		for (int i = 0; i < 8; i++) {
 			balls_a_textures[i] = new olc::Sprite("assets/ballA" + std::to_string(i) + ".jpg");
@@ -249,6 +283,9 @@ public:
 		for (int i = 0; i < 7; i++) {
 			balls_b_textures[i] = new olc::Sprite("assets/ballB" + std::to_string(i) + ".jpg");
 		}
+
+		create_table();
+		create_balls();
 
 		return true;
 	}
