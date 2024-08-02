@@ -30,4 +30,51 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\ballA0.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballA1.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballA2.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballA3.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballA4.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballA5.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballA6.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballA7.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballB0.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballB1.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballB2.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballB3.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballB4.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballB5.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\ballB6.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

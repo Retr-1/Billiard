@@ -134,6 +134,23 @@
     <ClInclude Include="physics.h" />
     <ClInclude Include="vec.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\ballA0.jpg" />
+    <Image Include="assets\ballA1.jpg" />
+    <Image Include="assets\ballA2.jpg" />
+    <Image Include="assets\ballA3.jpg" />
+    <Image Include="assets\ballA4.jpg" />
+    <Image Include="assets\ballA5.jpg" />
+    <Image Include="assets\ballA6.jpg" />
+    <Image Include="assets\ballA7.jpg" />
+    <Image Include="assets\ballB0.jpg" />
+    <Image Include="assets\ballB1.jpg" />
+    <Image Include="assets\ballB2.jpg" />
+    <Image Include="assets\ballB3.jpg" />
+    <Image Include="assets\ballB4.jpg" />
+    <Image Include="assets\ballB5.jpg" />
+    <Image Include="assets\ballB6.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

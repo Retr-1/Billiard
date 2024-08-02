@@ -36,6 +36,8 @@ private:
 	bool white_on_the_move = false;
 	bool game_over = false;
 	int n_player_balls[4] = {1,1,7,7 };
+	olc::Sprite* balls_a_textures[8];
+	olc::Sprite* balls_b_textures[7];
 
 
 public:
@@ -104,18 +106,25 @@ public:
 		b.pos = default_white_pos;
 		b.mass = ball_mass;
 		engine.balls.push_back(b);
-		white_ball = &engine.balls[0];
 
-		Ball::Type type_pool[15];
+		struct BallProps {
+			Ball::Type type;
+			olc::Sprite* sprite;
+		};
+
+		BallProps pool[15];
 		for (int i = 0; i < 14; i += 2) {
-			type_pool[i] = Ball::P1;
-			type_pool[i + 1] = Ball::P2;
+			pool[i].type = Ball::P1;
+			pool[i].sprite = balls_a_textures[i/2];
+			pool[i + 1].type = Ball::P2;
+			pool[i + 1].sprite = balls_b_textures[i/2];
 		}
-		type_pool[14] = Ball::BLACK;
+		pool[14].type = Ball::BLACK;
+		pool[14].sprite = balls_a_textures[7];
 		
 		std::random_device rd;
 		std::mt19937 g(rd());
-		std::shuffle(type_pool, type_pool + 15, g);
+		std::shuffle(pool, pool + 15, g);
 
 		int bx = tx + table_width*2/3;
 		int by = ty + table_height / 2;
@@ -127,7 +136,8 @@ public:
 				b.r = ball_r;
 				b.pos = vec2d<float>(bx, tmpy);
 				b.mass = ball_mass;
-				b.type = type_pool[c];
+				b.type = pool[c].type;
+				b.sprite = pool[c].sprite;
 				engine.balls.emplace_back(b);
 
 				tmpy += ball_r*2;
@@ -220,6 +230,15 @@ public:
 		OlcPhysicsWindow::OnUserCreate();
 		create_table();
 		create_balls();
+
+		for (int i = 0; i < 8; i++) {
+			balls_a_textures[i] = new olc::Sprite("assets/ballA" + std::to_string(i) + ".jpg");
+		}
+
+		for (int i = 0; i < 7; i++) {
+			balls_b_textures[i] = new olc::Sprite("assets/ballB" + std::to_string(i) + ".jpg");
+		}
+
 		return true;
 	}
 

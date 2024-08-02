@@ -13,6 +13,7 @@ public:
 	float mass;
 	float r;
 	float sim_time_remaining;
+	olc::Sprite* sprite;
 
 	enum Type {
 		WHITE,
