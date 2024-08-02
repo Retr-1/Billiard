@@ -174,7 +174,18 @@ public:
 	}
 
 	void draw(Ball& ball) override {
-		FillCircle(olc::vi2d(ball.pos.x, ball.pos.y), ball.r, Ball::type_colors[ball.type]);
+		float top = ball.pos.y - ball.r;
+		float bottom = ball.pos.y + ball.r;
+		float left = ball.pos.x - ball.r;
+		float right = ball.pos.x + ball.r;
+		for (int y = top; y < bottom; y++) {
+			float dy = fabs(y - ball.pos.y);
+			float r2 = sqrtf(ball.r * ball.r - dy * dy);
+			float dx = ball.r - r2;
+			for (int x = left + dx; x < right - dx; x++) {
+				Draw(x, y, Ball::type_colors[ball.type]);
+			}
+		}
 	}
 
 	void end_turn() {
