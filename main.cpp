@@ -5,6 +5,7 @@
 #include <random>
 #include <algorithm>
 const olc::Pixel Ball::type_colors[4] = { olc::WHITE, olc::BLACK, olc::RED, olc::BLUE };
+constexpr float PI = 3.1415f;
 
 int randint(int a, int b) {
 	// returns from [a,b)
@@ -20,11 +21,11 @@ class Window : public OlcPhysicsWindow
 private:
 	int table_width = 600;
 	int table_height = 350;
-	int table_border = 40;
+	int table_border = 50;
 	int sx = (1200-(table_width+table_border*2))/2; int sy = (800-(table_height+table_border*2))/2;
 	int tx = sx + table_border; int ty = sy + table_border;
 	int etx = tx + table_width; int ety = ty + table_height;
-	int ball_r = table_border / 3;
+	int ball_r = table_border / 2 ;
 	float ball_mass = 20;
 	vec2d<float> default_white_pos = vec2d<float>(tx + table_width / 3, ty + table_height / 2);
 	Ball* white_ball = nullptr;
@@ -180,44 +181,55 @@ public:
 		float right = ball.pos.x + ball.r;
 		float size = ball.r * 2;
 		int rsqr = ball.r * ball.r;
-		//for (int y = top; y < bottom; y++) {
-		//	float dy = fabs(y - ball.pos.y);
-		//	float r2 = sqrtf(rsqr - dy * dy);
-		//	float dx = ball.r - r2;
-		//	float seg_width = (right - dx) - (left + dx);
-		//	for (int x = left + dx; x < right - dx; x++) {
-		//		//Draw(x, y, Ball::type_colors[ball.type]);
-		//		//float perimeter = 2 * 3.1415f * r2;
-		//		float u = (y-top) / size;
-		//		float v = (x - left) / size;
-		//		
-		//		olc::Pixel color;
-		//		if (ball.type != Ball::WHITE) {
-		//			//std::cout << ball.sprite;
-		//			color = ball.sprite->Sample(u, v);
-		//		}
-		//		else {
-		//			color = olc::WHITE;
-		//		}
-
-		//		Draw(x, y, color);
-		//	}
-		//}
 
 		for (int x = left; x < right; x++) {
 			float dx = fabs(x - ball.pos.x);
 			float dy = sqrtf(rsqr - dx * dx);
 			float sy = ball.r - dy;
 			for (int y = top + sy; y < bottom - sy; y++) {
-				float v = fmodf(fmodf(y - top + ball.travelled.y*0.1 - 0.25, size)+size,size) / size / 2;
-				float u = fmodf(fmodf(x - left + ball.travelled.x*0.1, size)+size,size) / size;
-				if (u > 1 || v > 1)
-					std::cout << u << ' ' << v << '\n';
-
 				if (ball.type == Ball::WHITE) {
 					Draw(x, y, Ball::type_colors[ball.type]);
 				}
 				else {
+					//float v = fmodf(fmodf(y - top + ball.travelled.y * 0.1, size) + size, size) / size;
+					////v = 0.5 * v + 0.25;
+					////float u = fmodf(fmodf(x - left + ball.travelled.x*0.1, size)+size,size) / size;
+					//float u = (x - left) / size / 3;
+					//u += ball.travelled.x * 0.01;
+					//u = u - (int)u;
+					////u = 0.5 * u + 0.25;
+					float obz = y - ball.pos.y;
+					float obx = x - ball.pos.x;
+					float oby = sqrtf(rsqr - obx * obx - obz * obz);
+					
+					const float m = 0.01f;
+					float bx = obx * cosf(ball.travelled.x*m) - oby * sinf(ball.travelled.x*m);
+					float rby = obx * sinf(ball.travelled.x*m) + oby * cosf(ball.travelled.x*m);
+
+					float bz = obz * cosf(ball.travelled.y*m) - rby * sinf(ball.travelled.y*m);
+					float by = obz * sinf(ball.travelled.y*m) + rby * cosf(ball.travelled.y*m);
+
+					//float big_angle = std::atan2f(bz, bx);
+					//float small_angle = fabs(std::acosf(by / ball.r));
+
+					////normalize coords of sphere point
+					//float mag = sqrtf(bx * bx + by * by + bz * bz);
+					//bx /= mag;
+					//by /= mag;
+					//bz /= mag;
+
+					/*float u = 0.5f + std::atan2f(bz, bx) / (2 * PI);
+					float v = 0.5f + std::acosf(by/ball.r) / PI;*/
+
+					float lon = atan2(by, bx);
+					float lat = atan2(bz, sqrt(bx * bx + by * by));
+					float u = (lon + PI) / (2 * PI);
+					float v = (log(tan(lat / 2 + PI / 4)) + PI) / (2 * PI);
+
+				/*	if (ball.sprite == balls_a_textures[0]) {
+						std::cout << u << ' ' << v << ' ' << by << '\n';
+					}*/
+
 					Draw(x, y, ball.sprite->Sample(u, v));
 				}
 			}
