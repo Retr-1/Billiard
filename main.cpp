@@ -191,40 +191,20 @@ public:
 					Draw(x, y, Ball::type_colors[ball.type]);
 				}
 				else {
-					//float v = fmodf(fmodf(y - top + ball.travelled.y * 0.1, size) + size, size) / size;
-					////v = 0.5 * v + 0.25;
-					////float u = fmodf(fmodf(x - left + ball.travelled.x*0.1, size)+size,size) / size;
-					//float u = (x - left) / size / 3;
-					//u += ball.travelled.x * 0.01;
-					//u = u - (int)u;
-					////u = 0.5 * u + 0.25;
 					float obz = y - ball.pos.y;
 					float obx = x - ball.pos.x;
 					float oby = sqrtf(rsqr - obx * obx - obz * obz);
 					
 					const float m = 0.01f;
-					float bx = obx * cosf(ball.travelled.x*m) - oby * sinf(ball.travelled.x*m);
-					float rby = obx * sinf(ball.travelled.x*m) + oby * cosf(ball.travelled.x*m);
+					const float s = -PI / 2;
+					float bx = obx * cosf(ball.travelled.x*m+s) - oby * sinf(ball.travelled.x*m+s);
+					float rby = obx * sinf(ball.travelled.x*m+s) + oby * cosf(ball.travelled.x*m+s);
 
 					float bz = obz * cosf(ball.travelled.y*m) - rby * sinf(ball.travelled.y*m);
 					float by = obz * sinf(ball.travelled.y*m) + rby * cosf(ball.travelled.y*m);
 
-					//float big_angle = std::atan2f(bz, bx);
-					//float small_angle = fabs(std::acosf(by / ball.r));
-
-					////normalize coords of sphere point
-					//float mag = sqrtf(bx * bx + by * by + bz * bz);
-					//bx /= mag;
-					//by /= mag;
-					//bz /= mag;
-
-					/*float u = 0.5f + std::atan2f(bz, bx) / (2 * PI);
-					float v = 0.5f + std::acosf(by/ball.r) / PI;*/
-
-					float lon = atan2(by, bx);
-					float lat = atan2(bz, sqrt(bx * bx + by * by));
-					float u = (lon + PI) / (2 * PI);
-					float v = (log(tan(lat / 2 + PI / 4)) + PI) / (2 * PI);
+					float u = 0.5f + std::atan2f(bz, bx) / (2 * PI);
+					float v = 1.0f - std::acosf(by / ball.r) / PI;
 
 				/*	if (ball.sprite == balls_a_textures[0]) {
 						std::cout << u << ' ' << v << ' ' << by << '\n';
