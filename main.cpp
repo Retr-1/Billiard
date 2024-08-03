@@ -19,13 +19,13 @@ int randint(int a, int b) {
 class Window : public OlcPhysicsWindow
 {
 private:
-	int table_width = 600;
+	int table_width = 800;
 	int table_height = 350;
-	int table_border = 50;
+	int table_border = 60;
 	int sx = (1200-(table_width+table_border*2))/2; int sy = (800-(table_height+table_border*2))/2;
 	int tx = sx + table_border; int ty = sy + table_border;
 	int etx = tx + table_width; int ety = ty + table_height;
-	int ball_r = table_border / 2 ;
+	int ball_r = table_border / 2 - 5;
 	float ball_mass = 20;
 	vec2d<float> default_white_pos = vec2d<float>(tx + table_width / 3, ty + table_height / 2);
 	Ball* white_ball = nullptr;
@@ -127,7 +127,7 @@ public:
 		std::mt19937 g(rd());
 		std::shuffle(pool, pool + 15, g);
 
-		int bx = tx + table_width*2/3;
+		int bx = tx + (table_width-table_border*2)*2/3;
 		int by = ty + table_height / 2;
 		int c = 0;
 		for (int i = 0; i < 5; i++) {
@@ -156,7 +156,8 @@ public:
 		DrawLine(olc::vi2d(sx, sy+table_border*2+table_height), olc::vi2d(sx + table_width + table_border * 2, sy+table_border*2+table_height));
 		DrawLine(olc::vi2d(sx, sy), olc::vi2d(sx, sy+table_height+table_border*2));
 		DrawLine(olc::vi2d(sx+table_width+table, sy), olc::vi2d(sx+table_width+table_border*2, sy + table_height + table_border * 2));*/
-		FillRect(olc::vi2d(sx, sy), olc::vi2d(table_width + table_border * 2, table_height + table_border * 2), olc::DARK_GREEN);
+		olc::Pixel TABLE_COLOR(0, 80, 0);
+		FillRect(olc::vi2d(sx, sy), olc::vi2d(table_width + table_border * 2, table_height + table_border * 2), TABLE_COLOR);
 		for (olc::vi2d pos : {
 			olc::vi2d(sx + table_border,sy + table_border),
 			olc::vi2d(sx + table_border + table_width / 2, sy + table_border),
@@ -170,7 +171,7 @@ public:
 		{
 			FillCircle(pos, table_border, olc::GREY);
 		}
-		FillRect(olc::vi2d(sx + table_border, sy + table_border), olc::vi2d(table_width, table_height), olc::DARK_GREEN);
+		FillRect(olc::vi2d(sx + table_border, sy + table_border), olc::vi2d(table_width, table_height), TABLE_COLOR);
 		OlcPhysicsWindow::draw(engine);
 	}
 
