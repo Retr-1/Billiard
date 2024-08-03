@@ -323,11 +323,11 @@ public:
 
 		if (all_still) {
 			if (game_over) {
-				DrawString({ tx,100 }, "Player " + (std::string)(winner == Ball::Type::P1 ? "RED" : "BLUE") + " WON!!!", Ball::type_colors[winner], 4U);
+				DrawString({ tx,100 }, "Player " + (std::string)(winner == Ball::Type::P1 ? "1 (solid)" : "2 (striped)") + " WON!!!", Ball::type_colors[winner], 4U);
 			}
 			else {
 				process_user_interaction();
-				DrawString({ 10,10 }, "Player " + (std::string)(player_turn == Ball::Type::P1 ? "RED" : "BLUE") + "'s turn", Ball::type_colors[player_turn], 3U);
+				DrawString({ 10,10 }, "Player " + (std::string)(player_turn == Ball::Type::P1 ? "1 (solid)" : "2 (striped)") + "'s turn", Ball::type_colors[player_turn], 3U);
 			}
 		}
 
