@@ -2,40 +2,43 @@ import PIL
 import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
+from math import pi
 
-BALL_R = 400
+BALL_R = 200
 TEXT_CRC_R = 100
+IMAGE_WIDTH = int(BALL_R*2*pi)
+IMAGE_HEIGHT = int(BALL_R*pi)
 FONT = PIL.ImageFont.truetype(r'C:\Users\System-Pc\Desktop\arial.ttf', 100)
 COLORS = ['yellow', 'blue', 'red', 'purple', 'orange', 'green', 'cyan']
 
 def ball_type1(text, color):
-    image = PIL.Image.new('RGB', (BALL_R*2, BALL_R))
+    image = PIL.Image.new('RGB', (IMAGE_WIDTH, IMAGE_HEIGHT))
     image_draw = PIL.ImageDraw.Draw(image)
-    image_draw.rectangle(((0,0), (BALL_R*2, BALL_R)), color, None)
-    image_draw.ellipse(((BALL_R-TEXT_CRC_R, BALL_R/2-TEXT_CRC_R), (BALL_R+TEXT_CRC_R, BALL_R/2+TEXT_CRC_R)), 'white')
+    image_draw.rectangle(((0,0), (IMAGE_WIDTH, IMAGE_HEIGHT)), color, None)
+    image_draw.ellipse(((IMAGE_WIDTH/2-TEXT_CRC_R, IMAGE_HEIGHT/2-TEXT_CRC_R), (IMAGE_WIDTH/2+TEXT_CRC_R, IMAGE_HEIGHT/2+TEXT_CRC_R)), 'white')
     FONT = PIL.ImageFont.truetype(r'C:\Users\System-Pc\Desktop\arial.ttf', 100)
     # bbox = image_draw.textbbox((BALL_R,BALL_R/2), text, FONT)  
     bbox = FONT.getbbox(text)
     size = (bbox[2], bbox[3])
     # print(size)
-    image_draw.text((BALL_R-size[0]/2, BALL_R/2-size[1]/2-10), text, 'black', FONT)
+    image_draw.text((IMAGE_WIDTH/2-size[0]/2, IMAGE_HEIGHT/2-size[1]/2-10), text, 'black', FONT)
     # image.show()
     return image
 
 def ball_type2(text, color):
-    image = PIL.Image.new('RGB', (BALL_R*2, BALL_R))
+    image = PIL.Image.new('RGB', (IMAGE_WIDTH, IMAGE_HEIGHT))
     image_draw = PIL.ImageDraw.Draw(image)
-    image_draw.rectangle(((0,0), (BALL_R*2, BALL_R)), 'white', None)
-    STRIPE_TOP = 0.2*BALL_R
-    STRIPE_BOTTOM = BALL_R-STRIPE_TOP
-    image_draw.rectangle(((0,STRIPE_TOP), (BALL_R*2, STRIPE_BOTTOM)), color, None)
-    image_draw.ellipse(((BALL_R-TEXT_CRC_R, BALL_R/2-TEXT_CRC_R), (BALL_R+TEXT_CRC_R, BALL_R/2+TEXT_CRC_R)), 'white')
+    image_draw.rectangle(((0,0), (IMAGE_WIDTH, IMAGE_HEIGHT)), 'white', None)
+    STRIPE_TOP = 0.3*IMAGE_HEIGHT
+    STRIPE_BOTTOM = IMAGE_HEIGHT-STRIPE_TOP
+    image_draw.rectangle(((0,STRIPE_TOP), (IMAGE_WIDTH, STRIPE_BOTTOM)), color, None)
+    image_draw.ellipse(((IMAGE_WIDTH/2-TEXT_CRC_R, IMAGE_HEIGHT/2-TEXT_CRC_R), (IMAGE_WIDTH/2+TEXT_CRC_R, IMAGE_HEIGHT/2+TEXT_CRC_R)), 'white')
 
     # bbox = image_draw.textbbox((BALL_R,BALL_R/2), text, FONT)  
     bbox = FONT.getbbox(text)
     size = (bbox[2], bbox[3])
     # print(size)
-    image_draw.text((BALL_R-size[0]/2, BALL_R/2-size[1]/2-10), text, 'black', FONT)
+    image_draw.text((IMAGE_WIDTH/2-size[0]/2, IMAGE_HEIGHT/2-size[1]/2-10), text, 'black', FONT)
     
     return image
 
